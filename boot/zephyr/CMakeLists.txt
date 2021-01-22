@@ -224,19 +224,34 @@ if(NOT CONFIG_BOOT_SIGNATURE_KEY_FILE STREQUAL "")
 	${KEY_FILE}
 	)
 
-  set(GENERATED_PUBKEY ${ZEPHYR_BINARY_DIR}/autogen-pubkey.c)
-  add_custom_command(
-    OUTPUT ${GENERATED_PUBKEY}
-    COMMAND
-    ${PYTHON_EXECUTABLE}
-    ${MCUBOOT_DIR}/scripts/imgtool.py
-    getpub
-    -k
-    ${KEY_FILE}
-    > ${GENERATED_PUBKEY}
-    DEPENDS ${KEY_FILE}
-    )
-  zephyr_library_sources(${GENERATED_PUBKEY})
+  if(DEFINED ENV{ZEPHYR_MCUBOOT_USE_ENV})
+    set(GENERATED_PUBKEY ${ZEPHYR_BINARY_DIR}/autogen-pubkey.c)
+    add_custom_command(
+      OUTPUT ${GENERATED_PUBKEY}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${MCUBOOT_DIR}/scripts/imgtool.py
+      getpub
+      -k
+      ${KEY_FILE}
+      > ${GENERATED_PUBKEY}
+      )
+    zephyr_library_sources(${GENERATED_PUBKEY})
+  else()
+    set(GENERATED_PUBKEY ${ZEPHYR_BINARY_DIR}/autogen-pubkey.c)
+    add_custom_command(
+      OUTPUT ${GENERATED_PUBKEY}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${MCUBOOT_DIR}/scripts/imgtool.py
+      getpub
+      -k
+      ${KEY_FILE}
+      > ${GENERATED_PUBKEY}
+      DEPENDS ${KEY_FILE}
+      )
+    zephyr_library_sources(${GENERATED_PUBKEY})
+  endif()
 endif()
 
 if(CONFIG_MCUBOOT_CLEANUP_ARM_CORE)
