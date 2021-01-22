@@ -41,9 +41,9 @@ class PasswordRequired(Exception):
 
 def load(path, passwd=None):
     """Try loading a key from the given path.  Returns None if the password wasn't specified."""
-    if os.getenv('ZEPHYR_MCUBOOT_USE_ENV') is "y":
+    if os.getenv('ZEPHYR_MCUBOOT_USE_ENV') == "y":
         raw_pem = os.getenv('ZEPHYR_MCUBOOT_KEY')
-    else
+    else:
         with open(path, 'rb') as f:
             raw_pem = f.read()
     try:
