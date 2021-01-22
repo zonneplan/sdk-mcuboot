@@ -31,7 +31,7 @@ from .rsa import RSA, RSAPublic, RSAUsageError, RSA_KEY_SIZES
 from .ecdsa import ECDSA256P1, ECDSA256P1Public, ECDSAUsageError
 from .ed25519 import Ed25519, Ed25519Public, Ed25519UsageError
 from .x25519 import X25519, X25519Public, X25519UsageError
-
+import os
 
 class PasswordRequired(Exception):
     """Raised to indicate that the key is password protected, but a
@@ -41,8 +41,11 @@ class PasswordRequired(Exception):
 
 def load(path, passwd=None):
     """Try loading a key from the given path.  Returns None if the password wasn't specified."""
-    with open(path, 'rb') as f:
-        raw_pem = f.read()
+    if os.getenv('ZEPHYR_MCUBOOT_USE_ENV') is "y":
+        raw_pem = os.getenv('ZEPHYR_MCUBOOT_KEY')
+    else
+        with open(path, 'rb') as f:
+            raw_pem = f.read()
     try:
         pk = serialization.load_pem_private_key(
                 raw_pem,
